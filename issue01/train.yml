@@ -1,0 +1,94 @@
+
+dataset: 
+  data_dir: '/home/yingmuzhi/microDL_2D/_output/retardance2dna_microdl_patches/tiles_256-256_step_128-128'
+  model_task: regression
+  height: 256 # tile's height
+  width: 256  # tile's width
+  input_channels: [0] # label-free channel
+  mask_channels: [2]  # mask channel
+  target_channels: [1]  # 0 - nuclei
+  split_by_column: pos_idx
+  split_ratio:  # Define the split ratio of data set
+    test: 0.15
+    train: 0.7
+    val: 0.15
+  squeeze: True
+  random_seed: 42
+  augmentation: True  # --- there are many parameters
+
+
+network:
+  activation:
+    type: relu
+  batch_norm: True
+  block_sequence: conv-activation-bn
+  class: UNet2D  # 2D
+  data_format: channels_first
+  dropout: 0.2
+  dropout_dense: 0.4
+  filter_size: 3
+
+  # activation function for output layer
+  final_activation: linear
+  temperature: 1
+
+  height: 256 # tile's height
+  width: 256  # tile's width
+  depth: 1  # tile's depth
+
+  pooling_type: average
+  residual: True
+  skip_merge_type: concat
+  upsampling: bilinear
+
+  num_convs_per_block: 2  # number of convolutional layers per U-Net block
+
+  num_filters_per_block:  # typically the number of filters is doubled per layer
+  - 16
+  - 32
+  - 64
+  - 128
+  - 256
+
+  num_input_channels: 1   # Number of input channels, can be 1 if only phase images are input, can be 2 if both phase and retardance are used
+  num_target_channels: 1     # 1 as only nuclear channels is to be predicted
+
+
+trainer:
+  batch_size: 32
+
+  callbacks:
+    LearningRateScheduler:
+      lr_find: False         # model iteratively finds the learning rate by itself
+      base_lr: 0.00005       # define the base learning rate
+      max_lr: 0.006          # specify the maximum learning rate
+      step_size: 2           # step size
+      gamma: 0.5
+      scale_mode: "cycle"
+    EarlyStopping:
+      mode: min              # stop the model if validation loss is low
+      monitor: val_loss
+      patience: 10
+      verbose: True
+    ModelCheckpoint:
+      mode: min              # max - val loss does not increase anymore
+      monitor: val_loss      # val_dice_coef
+      save_best_only: True
+      verbose: True
+    TensorBoard:
+      histogram_freq: 0
+      verbose: True
+  
+  loss: mae_loss  # mae preferred
+  # masked_loss: false
+  max_epochs: 200
+  metrics: ['ms_ssim','pearson_corr', 'ssim','coeff_determination']
+  model_dir: '/home/yingmuzhi/microDL_2D/_output/microdl_model'
+  optimizer: 
+    lr: 0.001
+    name: adam
+  # patience: 10
+  num_workers: 12
+
+
+verbose: 10

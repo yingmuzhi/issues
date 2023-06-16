@@ -1,0 +1,52 @@
+output_dir: '/home/yingmuzhi/microDL_2D/_output/retardance2dna_microdl_patches'
+
+verbose: 10
+
+input_dir: '/home/yingmuzhi/microDL_2D/_input'
+
+channel_ids: [0, 1] # 0-BF, 1-barin axon tacks,  # default is -1 for all indices
+
+slice_ids: -1 # the actually slice_ids: [0, 1, 2, 3, 4] # 45 slices # default is -1 for all indices
+
+pos_ids: -1 # the actually pos_ids: [16, 17, 18, 19, 20, 21, 22, 23] plus [29, 30, 31, 32, 33, 34, 35, 36, 37, 38]  # default is -1 for all indices
+
+time_ids: [0]   # [0] time # default is -1 for all indices
+
+num_workers: 12
+
+
+normalize: 
+  normalize_im: 'dataset'
+  min_fraction: 0.25      # 0.25 means nuclei, 0.1 means mem
+  normalize_channels: [True, True]
+  uniform_struct: True
+
+
+masks:
+  channels: [1]  # stain nuclei
+  str_elem_radius: 3
+  mask_type: 'otsu' # 'unimodal'
+  mask_ext: '.png'
+  # --- add
+  mask_channel: 2 # add
+  mask_dir: '/home/yingmuzhi/microDL_2D/_output/retardance2dna_microdl_patches/mask_channels_1' # add
+  # --- add
+
+
+tile:
+  min_fraction: 0.25      # 0.25 means nuclei
+  tile_size: [256, 256]   # tile_size defines the size of tiles in [x-width,y-length] format to be created from input images useful for training the microDL models.
+  step_size: [128, 128]   # step_size is the stride between centers of tiles
+  depths: [1, 1]          # E.g. if tiling for a stack to 2.5D model, input channels would have a depth > 1 (5 is common), and output channel(s) would have a depth of 1.
+  image_format: 'zyx'
+  # --- add
+  mask_channel: 2 # add
+  tile_3d: False
+  mask_dir: '/home/yingmuzhi/microDL_2D/_output/retardance2dna_microdl_patches/mask_channels_1'
+  tile_dir: '/home/yingmuzhi/microDL_2D/_output/retardance2dna_microdl_patches/tiles_256-256_step_128-128'
+  # --- add
+
+
+metadata:
+  order: 'cztp'
+  name_parser: 'parse_sms_name'

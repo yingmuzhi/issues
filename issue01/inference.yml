@@ -1,0 +1,36 @@
+
+model_dir: '/home/yingmuzhi/microDL_2D/_output/microdl_model'
+
+image_dir: '/home/yingmuzhi/microDL_2D/_input'
+
+preprocess_dir: '/home/yingmuzhi/microDL_2D/_output/retardance2dna_microdl_patches'
+
+# define inference dataset channels. run on raw dataset, not tiles
+dataset:
+  input_channels: [0]   # label-free channel used for prediction by model
+  target_channels: [1]  # target image channel (fluorescence image) to compare how well the prediction worked
+  # pos_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44] # 45 slices # default is -1 for all indices  # split will choose which to train, which to test
+  slice_ids: [0, 1, 2, 3, 4] # 5 slices # default is -1 for all indices
+
+# define the output image format
+images:
+  image_format: 'zyx'     # output predicted image order of dimension
+  image_ext: '.tif'       # output images are stored as single page tiff files
+  # suffix: '25DUnet_membrane'   # saved output image name suffix
+  name_format: sms 
+  pred_chan_name: 'pred'  # suffix added to saved output image name
+
+save_to_image_dir: False    # 'False' saves output in model directory, 'True' in input image directory
+
+save_folder_name: predictions # specify the name of directory to be created inside model dir to save output images
+
+data_split: test             # define which image set in train/val/test/all split are to be used for the prediction
+
+save_figs: True             # do you want to save a figure panel to compare the predicted and target images
+
+# metrics to be computed to define prediction quality, the values will be printed on output figure panel and saved as text files
+metrics:
+    metrics: [ssim, corr, r2, mae, mse]  # metrics for output image quality check: refer to readme for details
+    metrics_orientations: ['xy']   # for 'xy' slice, 'xz' slice or 'yz' slice, where xz and yz for 3D predictions
+
+
